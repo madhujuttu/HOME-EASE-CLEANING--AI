@@ -1,0 +1,22 @@
+import { Router } from 'express';
+import {
+  getCustomers,
+  getCustomerById,
+  createCustomer,
+  updateCustomer,
+  addCustomerNote
+} from '../controllers/customerController.js';
+import { authenticate } from '../middleware/auth.js';
+import { logAuditEvent } from '../middleware/rateLimiter.js';
+
+const router = Router();
+
+router.use(authenticate);
+
+router.get('/', getCustomers);
+router.get('/:id', getCustomerById);
+router.post('/', logAuditEvent('Create Customer', 'Customer Management'), createCustomer);
+router.put('/:id', logAuditEvent('Update Customer', 'Customer Management'), updateCustomer);
+router.post('/:id/notes', logAuditEvent('Add Customer Note', 'Customer Management'), addCustomerNote);
+
+export default router;

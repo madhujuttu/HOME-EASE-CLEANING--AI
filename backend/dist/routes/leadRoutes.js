@@ -1,0 +1,18 @@
+import { Router } from 'express';
+import { getLeads, getLeadById, getLeadHistory, createLead, updateLead, deleteLead, assignLead, convertLeadToCustomer, addLeadNote } from '../controllers/leadController.js';
+import { authenticate, authorizeRoles } from '../middleware/auth.js';
+import { logAuditEvent } from '../middleware/rateLimiter.js';
+const router = Router();
+router.use(authenticate);
+router.get('/', getLeads);
+router.get('/:id', getLeadById);
+router.get('/:id/history', getLeadHistory);
+router.post('/:id/notes', logAuditEvent('Add Lead Note', 'Lead Management'), addLeadNote);
+router.post('/', logAuditEvent('Create Lead', 'Lead Management'), createLead);
+router.put('/:id', logAuditEvent('Update Lead', 'Lead Management'), updateLead);
+router.patch('/:id', logAuditEvent('Update Lead', 'Lead Management'), updateLead);
+router.delete('/:id', authorizeRoles('admin', 'manager'), logAuditEvent('Delete Lead', 'Lead Management'), deleteLead);
+router.post('/:id/assign', logAuditEvent('Assign Lead', 'Lead Management'), assignLead);
+router.patch('/:id/assign', logAuditEvent('Assign Lead', 'Lead Management'), assignLead);
+router.post('/:id/convert', logAuditEvent('Convert Lead to Customer', 'Lead Management'), convertLeadToCustomer);
+export default router;

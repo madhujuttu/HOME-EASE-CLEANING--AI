@@ -1,0 +1,17 @@
+import { Router } from 'express';
+import { getMeetings, createMeeting, updateMeeting, cancelMeeting, completeMeeting, rescheduleMeeting } from '../controllers/meetingController.js';
+import { authenticate } from '../middleware/auth.js';
+import { logAuditEvent } from '../middleware/rateLimiter.js';
+const router = Router();
+router.use(authenticate);
+router.get('/', getMeetings);
+router.post('/', logAuditEvent('Schedule Consultation', 'Meeting Intelligence'), createMeeting);
+router.put('/:id', logAuditEvent('Update Consultation', 'Meeting Intelligence'), updateMeeting);
+router.patch('/:id', logAuditEvent('Update Consultation', 'Meeting Intelligence'), updateMeeting);
+router.post('/:id/reschedule', logAuditEvent('Reschedule Consultation', 'Meeting Intelligence'), rescheduleMeeting);
+router.patch('/:id/reschedule', logAuditEvent('Reschedule Consultation', 'Meeting Intelligence'), rescheduleMeeting);
+router.post('/:id/complete', logAuditEvent('Complete Consultation', 'Meeting Intelligence'), completeMeeting);
+router.patch('/:id/complete', logAuditEvent('Complete Consultation', 'Meeting Intelligence'), completeMeeting);
+router.post('/:id/cancel', logAuditEvent('Cancel Consultation', 'Meeting Intelligence'), cancelMeeting);
+router.patch('/:id/cancel', logAuditEvent('Cancel Consultation', 'Meeting Intelligence'), cancelMeeting);
+export default router;

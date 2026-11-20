@@ -1,0 +1,12 @@
+import { Router } from 'express';
+import { register, login, getMe, sendPhoneOtp, loginWithPhone, loginWithGoogle } from '../controllers/authController.js';
+import { authenticate } from '../middleware/auth.js';
+import { logAuditEvent } from '../middleware/rateLimiter.js';
+const router = Router();
+router.post('/register', register);
+router.post('/login', logAuditEvent('User Login', 'Authentication'), login);
+router.post('/phone/otp', sendPhoneOtp);
+router.post('/phone/login', logAuditEvent('Phone OTP Login', 'Authentication'), loginWithPhone);
+router.post('/google', logAuditEvent('Google Login', 'Authentication'), loginWithGoogle);
+router.get('/me', authenticate, getMe);
+export default router;

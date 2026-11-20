@@ -1,0 +1,12 @@
+import { Router } from 'express';
+import { getBookings, createBooking, updateBookingStatus, addBookingReview, acceptOrRejectBooking } from '../controllers/bookingController.js';
+import { authenticate } from '../middleware/auth.js';
+import { logAuditEvent } from '../middleware/rateLimiter.js';
+const router = Router();
+router.use(authenticate);
+router.get('/', getBookings);
+router.post('/', logAuditEvent('Create Booking', 'Booking Dispatch'), createBooking);
+router.put('/:id/status', logAuditEvent('Update Booking Status', 'Booking Dispatch'), updateBookingStatus);
+router.post('/:id/review', logAuditEvent('Add Booking Review', 'Booking Review'), addBookingReview);
+router.post('/:id/respond', logAuditEvent('Provider Respond Booking', 'Booking Dispatch'), acceptOrRejectBooking);
+export default router;
